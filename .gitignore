@@ -1,0 +1,35 @@
+# Ignore build artifacts
+build/
+
+# Ignore generated distribution files
+dist/
+
+# Ignore egg-info directory
+ctd_python.egg-info/
+
+# Ignore unzipped data directory
+unzipped_data/
+
+# Ignore zipped data directory
+zipped_data/
+
+# Ignore any virtual environment directories (e.g., venv, env, .venv)
+# Add these lines if you have a virtual environment
+venv/
+env/
+.venv/
+
+# Ignore any local development configuration files
+# Add lines for any specific files you want to ignore
+config.local
+secrets.py
+
+# Ignore cache and temporary files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore editor and IDE files
+.vs
+

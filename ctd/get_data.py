@@ -1,4 +1,5 @@
 import os
+import io
 import gzip
 import shutil
 import logging
@@ -7,20 +8,15 @@ from tqdm import tqdm
 import pandas as pd
 
 PACKAGE_DIR = os.path.dirname(__file__)
-ZIPPED_DATA_DIR = os.path.join(PACKAGE_DIR, 'zipped_data')
-UNZIPPED_DATA_DIR = os.path.join(PACKAGE_DIR, 'unzipped_data')
+RAW_DATA_DIR = os.path.join(PACKAGE_DIR, 'unzipped_data')
 
-from tqdm import tqdm
-
-from tqdm import tqdm
-import io
 
 def download_resource(resource: str) -> str:
     url_dl_pattern = 'http://ctdbase.org/reports/{resource}.csv.gz'
     url = url_dl_pattern.format(resource=resource)
 
     logging.info('[download_resource]: downloading: %s', resource)
-    local_filename = os.path.join(ZIPPED_DATA_DIR, url.split('/')[-1])
+    local_filename = os.path.join(RAW_DATA_DIR, f"{resource}.csv")
 
     ## TODO - make this a config to refresh
     ## perhaps even add the date of the file created so we can dl new
@@ -97,7 +93,7 @@ def get_data(resource: str) -> pd.DataFrame:
     download_resource(resource_name)
 
     line_number = 27  # files have the same header, TODO need to make dynamic
-    the_file = os.path.join(UNZIPPED_DATA_DIR, f"{resource_name}.csv")
+    the_file = os.path.join(RAW_DATA_DIR, f"{resource_name}.csv")
 
     with open(the_file, 'r') as reader:
         for i, row in enumerate(reader):

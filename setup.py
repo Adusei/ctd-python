@@ -11,6 +11,7 @@ setup(
     install_requires=[
         'requests',
         'pandas',
+        'tqdm'
     ],
     package_data={'ctd': ['zipped_data/*', 'unzipped_data/*']},
     include_package_data=True,

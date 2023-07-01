@@ -10,6 +10,7 @@ import pandas as pd
 PACKAGE_DIR = os.path.dirname(__file__)
 RAW_DATA_DIR = os.path.join(PACKAGE_DIR, 'unzipped_data')
 
+from pprint import pprint
 
 def download_resource(resource: str) -> str:
     url_dl_pattern = 'http://ctdbase.org/reports/{resource}.csv.gz'
@@ -71,34 +72,49 @@ def get_data(resource: str) -> pd.DataFrame:
         - ChemicalDiseaseInteractions
         - Diseases
     """
+
     RESOURCES = {
-        'GeneInteractionTypes': 'CTD_chem_gene_ixn_types',
-        'ChemicalPathwaysEnriched': 'CTD_chem_pathways_enriched',
-        'GeneDisease': 'CTD_genes_diseases',
-        'GenePathways': 'CTD_genes_pathways',
-        'DiseasePathways': 'CTD_diseases_pathways',
-        'ChemocalPhenoTypeInteractions': 'CTD_pheno_term_ixns',
-        'Exposure Studies': 'CTD_exposure_studies',
-        'Chemicals': 'CTD_chemicals',
-        'Genes': 'CTD_genes',
-        'ChemicalGeneInteractions': 'CTD_chem_gene_ixns',
-        'ChemicalDiseaseInteractions': 'CTD_chemicals_diseases',
-        'Diseases': 'CTD_diseases'
+        'GeneInteractionTypes': {'filename': 'CTD_chem_gene_ixn_types'},
+        'ChemicalPathwaysEnriched': {'filename': 'CTD_chem_pathways_enriched'},
+        'GeneDisease': {'filename': 'CTD_genes_diseases'},
+        'GenePathways': {'filename': 'CTD_genes_pathways'},
+        'DiseasePathways': {'filename': 'CTD_diseases_pathways'},
+        'ChemocalPhenoTypeInteractions': {'filename': 'CTD_pheno_term_ixns'},
+        'Exposure Studies': {'filename': 'CTD_exposure_studies'},
+        'Chemicals': {'filename': 'CTD_chemicals'},
+        'Genes': {'filename': 'CTD_genes'},
+        'ChemicalGeneInteractions': {'filename': 'CTD_chem_gene_ixns'},
+        'ChemicalDiseaseInteractions': {'filename': 'CTD_chemicals_diseases', 'dtypes': {'ChemicalName': str,'ChemicalID': str,'CasRN': str,'DiseaseName': str,'DiseaseID': str,'DirectEvidence': str,'InferenceGeneSymbol': str,'InferenceScore': float,'OmimIDs': str,'PubMedIDs': str}},
+        'Diseases': {'filename': 'CTD_chem_gene_ixn_types'}
     }
 
-    resource_name = RESOURCES.get(resource)
-    if not resource_name:
+    resource_obj = RESOURCES.get(resource)
+
+    filename = resource_obj.get('filename')
+    dtypes = resource_obj.get('dtypes')
+
+    if not resource_obj:
         raise Exception(f"The resource '{resource}' is not available. Please check https://ctdbase.org/downloads/ for available resources.")
 
-    download_resource(resource_name)
+    download_resource(filename)
 
-    line_number = 27  # files have the same header, TODO need to make dynamic
-    the_file = os.path.join(RAW_DATA_DIR, f"{resource_name}.csv")
+    fields_line = '# Fields:'
+    header_line = '#'
+    the_file = os.path.join(RAW_DATA_DIR, f"{filename}.csv")
 
+    fields_line_number = None
     with open(the_file, 'r') as reader:
         for i, row in enumerate(reader):
-            if i == line_number:
-                header = row.replace("# ", "").split(",")
+            if 'Fields:' in row:
+                fields_line_number = i + 1
+            elif i == fields_line_number:
+                fields_line = row.strip("# ").strip()
+                fields = [field.strip() for field in fields_line.split(",")]
 
-    df = pd.read_csv(the_file, skiprows=29, names=header)
+    df = pd.read_csv(the_file, skiprows=fields_line_number + 1, names=fields, dtype=dtypes)
+
     return df
+
+
+if __name__ == '__main__':
+    get_data('ChemicalDiseaseInteractions')

@@ -85,7 +85,7 @@ def get_data(resource: str) -> pd.DataFrame:
         'Genes': {'filename': 'CTD_genes'},
         'ChemicalGeneInteractions': {'filename': 'CTD_chem_gene_ixns'},
         'ChemicalDiseaseInteractions': {'filename': 'CTD_chemicals_diseases', 'dtypes': {'ChemicalName': str,'ChemicalID': str,'CasRN': str,'DiseaseName': str,'DiseaseID': str,'DirectEvidence': str,'InferenceGeneSymbol': str,'InferenceScore': float,'OmimIDs': str,'PubMedIDs': str}},
-        'Diseases': {'filename': 'CTD_chem_gene_ixn_types'}
+        'Diseases': {'filename': 'CTD_diseases'}
     }
 
     resource_obj = RESOURCES.get(resource)
@@ -114,7 +114,3 @@ def get_data(resource: str) -> pd.DataFrame:
     df = pd.read_csv(the_file, skiprows=fields_line_number + 1, names=fields, dtype=dtypes)
 
     return df
-
-
-if __name__ == '__main__':
-    get_data('ChemicalDiseaseInteractions')

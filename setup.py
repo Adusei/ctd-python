@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name='ctd-python',
-    version='0.2.0',
+    version='0.2.1',
     description='Python interface to access data from The Comparative Toxicogenomics Database (CTD)',
     packages=['ctd'],
     install_requires=[
